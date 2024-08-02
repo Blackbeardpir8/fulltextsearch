@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from home.models import Product
-from django.contrib.postgres.search import SearchVector , SearchQuery , SearchRank
+from django.contrib.postgres.search import SearchVector , SearchQuery , SearchRank , SearchHeadline
 
 # Create your views here.
 def index(request):
@@ -16,8 +16,8 @@ def index(request):
 
         rank = SearchRank(vector,query)
         results = Product.objects.annotate(
-            rank = rank 
-        ).filter(rank__gte=.06).order_by('-rank')
+            headline = SearchHeadline("Html tag type kr dena ") 
+        ).order_by('-rank')
     else:
         results = Product.objects.all()
         
