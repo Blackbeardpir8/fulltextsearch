@@ -9,7 +9,7 @@ django.setup()
 from home.models import Product
 
 # Fetch data from the API
-url = "https://dummyjson.com/products?limit=1000"
+url = "https://dummyjson.com/products?limit=10000"
 response = requests.get(url)
 data = response.json()
 
