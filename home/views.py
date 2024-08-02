@@ -5,7 +5,7 @@ from home.models import Product
 def index(request):
     search = request.GET.get('search')
     if search:
-        results = Product.objects.filter(title__search=search)
+        results = Product.objects.filter(description__search=search)
     else:
         results = Product.objects.all()
 
