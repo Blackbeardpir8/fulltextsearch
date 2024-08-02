@@ -8,15 +8,18 @@ def index(request):
     if search:
         query = SearchQuery(search)
         vector = SearchVector('title' ,'category','brand','sku')
+        vector = (
+            SearchVector('title' , weight = "A") +
+                  SearchVector('category', weight = "B") +
+                  SearchVector('brand',weight = "C") 
+                  )
+
         rank = SearchRank(vector,query)
         results = Product.objects.annotate(
             rank = rank 
         ).filter(rank__gte=.06).order_by('-rank')
     else:
         results = Product.objects.all()
-
-    for result in results:
-        print(result.rank)
         
 
     return render(request, 'index.html', {'results': results , 'search' : request.GET.get('search')})
