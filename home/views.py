@@ -7,7 +7,7 @@ def index(request):
     search = request.GET.get('search')
     if search:
         results = Product.objects.annotate(
-            search = SearchVector('title','category','description')
+            search = SearchVector('title') + SearchVector('category') +  SearchVector('description')
         ).filter(search = search)
     else:
         results = Product.objects.all()
