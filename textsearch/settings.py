@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
 EXTERNAL_APPS = [
     'home',
+    'django.contrib.postgres',
 ]
 
 INSTALLED_APPS = INSTALLED_APPS + EXTERNAL_APPS
