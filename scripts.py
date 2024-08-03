@@ -1,4 +1,4 @@
-import os
+"""import os
 import django
 import requests
 
@@ -29,3 +29,5 @@ for product_data in data['products']:
         product.save()
     except Exception as e:
         print(f"Error saving product: {e}")
+"""
+

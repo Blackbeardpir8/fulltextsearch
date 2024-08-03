@@ -1,25 +1,39 @@
 from django.shortcuts import render
 from home.models import Product
-from django.contrib.postgres.search import SearchVector , SearchQuery , SearchRank , SearchHeadline
+from django.contrib.postgres.search import SearchVector , SearchQuery , SearchRank , SearchHeadline, TrigramSimilarity
+from django.db.models import Q
 
 # Create your views here.
-def index(request):
-    search = request.GET.get('search')
-    if search:
-        query = SearchQuery(search)
-        vector = SearchVector('title' ,'category','brand','sku')
-        vector = (
-            SearchVector('title' , weight = "A") +
-                  SearchVector('category', weight = "B") +
-                  SearchVector('brand',weight = "C") 
-                  )
+from django.shortcuts import render
+from .models import Product
+from django.contrib.postgres.search import (SearchVector, SearchQuery, SearchRank,
+                                            TrigramSimilarity
+                                            )
+from django.db.models import Q
+import time
+from django.views.decorators.cache import cache_page
 
-        rank = SearchRank(vector,query)
+from django.core.cache import cache
+# @cache_page(60 * 1)
+def index(request):
+
+    if search := request.GET.get('search'):
+        query = SearchQuery(search)
+        vector =  SearchVector(
+            "title",
+            "description",
+            "category",
+            "brand"
+        )
+        rank = SearchRank(vector, query)
         results = Product.objects.annotate(
-            headline = SearchHeadline("Html tag type kr dena ") 
-        ).order_by('-rank')
+            rank = rank,
+            similarity = TrigramSimilarity('title', search) 
+            + TrigramSimilarity('description', search) + TrigramSimilarity('category', search)
+            + TrigramSimilarity('brand', search)
+        ).filter(Q(rank__gte =0.3)| Q(similarity__gte = 0.3)).distinct().order_by('-rank', '-similarity')
     else:
         results = Product.objects.all()
-        
+
 
     return render(request, 'index.html', {'results': results , 'search' : request.GET.get('search')})
