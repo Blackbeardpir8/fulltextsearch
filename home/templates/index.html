@@ -6,29 +6,71 @@
     <title>Search Results</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.css">
+    <style>
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .price-slider-container {
+            margin-bottom: 1rem;
+        }
+        table {
+            margin-top: 1rem;
+        }
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <form method="get" >
+        <h1 class="mb-4">Search Products</h1>
+        <form method="get">
             <div class="row">
-                <div class="col-4">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <input type="text" value = "{% if search %} {{search}} {% endif %}" name="search" class="form-control" placeholder="Search..." value="{{ request.GET.q }}">
+                        <input type="text" value="{% if search %}{{ search }}{% endif %}" name="search" class="form-control" placeholder="Search..." value="{{ request.GET.q }}">
                     </div>
                 </div>
-                
-                
-            </div>
-           
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <select name="brand" class="form-control">
+                            <option value="">Select Brand</option>
+                            {% for brand in brands %}
+                            <option {% if request.GET.brand == brand.brand %} selected {% endif %} value="{{ brand.brand }}">{{ brand.brand }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <select name="category" class="form-control">
+                            <option value="">Select Category</option>
+                            {% for category in categories %}
+                            <option {% if request.GET.category == category.category %} selected {% endif %} value="{{ category.category }}">{{ category.category }}</option>
 
-         
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group price-slider-container">
+                        <div id="price-slider"></div>
+                        <label for="price-slider">Price Range:</label>
+                        <input type="hidden" name="min_price" id="min-price">
+                        <input type="hidden" name="max_price" id="max-price">
+                    </div>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Search</button>
-       
-       
         </form>
         <br>
+        <h2 class="mb-4">Results</h2>
         <table class="table table-bordered">
-            <thead>
+            <thead class="thead-dark">
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
@@ -41,19 +83,19 @@
             </thead>
             <tbody>
                 {% for product in results %}
-                    <tr>
-                        <td>{{ product.title }}</td>
-                        <td>{{ product.description }}</td>
-                        <td>{{ product.category }}</td>
-                        <td>${{ product.price }}</td>
-                        <td>{{ product.brand }}</td>
-                        <td>{{ product.sku }}</td>
-                        <td><img src="{{ product.thumbnail }}" alt="{{ product.title }}" width="50"></td>
-                    </tr>
+                <tr>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>{{ product.brand }}</td>
+                    <td>{{ product.sku }}</td>
+                    <td><img src="{{ product.thumbnail }}" alt="{{ product.title }}" width="50"></td>
+                </tr>
                 {% empty %}
-                    <tr>
-                        <td colspan="7">No results found.</td>
-                    </tr>
+                <tr>
+                    <td colspan="7">No results found.</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -64,11 +106,11 @@
         var priceSlider = document.getElementById('price-slider');
 
         noUiSlider.create(priceSlider, {
-            start: [0, 1000], // Adjust these values to your desired default range
+            start: [0, 1000],
             connect: true,
             range: {
                 'min': 0,
-                'max': 1000 // Adjust this value to your maximum price
+                'max': 1000
             },
             tooltips: [true, true]
         });
@@ -78,11 +120,9 @@
             document.getElementById('max-price').value = values[1];
         });
 
-        // Set the initial values if they exist
         var minPrice = "{{ request.GET.min_price|default:0 }}";
         var maxPrice = "{{ request.GET.max_price|default:1000 }}";
         priceSlider.noUiSlider.set([minPrice, maxPrice]);
     </script>
-
 </body>
 </html>
