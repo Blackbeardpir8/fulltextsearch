@@ -30,7 +30,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <input type="text" value="{% if search %}{{ search }}{% endif %}" name="search" class="form-control" placeholder="Search..." value="{{ request.GET.q }}">
+                        <input type="text" value="{{ search }}" name="search" class="form-control" placeholder="Search...">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -38,7 +38,7 @@
                         <select name="brand" class="form-control">
                             <option value="">Select Brand</option>
                             {% for brand in brands %}
-                            <option {% if request.GET.brand == brand.brand %} selected {% endif %} value="{{ brand.brand }}">{{ brand.brand }}</option>
+                            <option value="{{ brand }}" {% if brand == selected_brand %} selected {% endif %}>{{ brand }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -48,8 +48,7 @@
                         <select name="category" class="form-control">
                             <option value="">Select Category</option>
                             {% for category in categories %}
-                            <option {% if request.GET.category == category.category %} selected {% endif %} value="{{ category.category }}">{{ category.category }}</option>
-
+                            <option value="{{ category }}" {% if category == selected_category %} selected {% endif %}>{{ category }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -60,8 +59,8 @@
                     <div class="form-group price-slider-container">
                         <div id="price-slider"></div>
                         <label for="price-slider">Price Range:</label>
-                        <input type="hidden" name="min_price" id="min-price">
-                        <input type="hidden" name="max_price" id="max-price">
+                        <input type="hidden" name="min_price" id="min-price" value="{{ min_price }}">
+                        <input type="hidden" name="max_price" id="max-price" value="{{ max_price }}">
                     </div>
                 </div>
             </div>
@@ -120,8 +119,8 @@
             document.getElementById('max-price').value = values[1];
         });
 
-        var minPrice = "{{ request.GET.min_price|default:0 }}";
-        var maxPrice = "{{ request.GET.max_price|default:1000 }}";
+        var minPrice = "{{ min_price|default:0 }}";
+        var maxPrice = "{{ max_price|default:1000 }}";
         priceSlider.noUiSlider.set([minPrice, maxPrice]);
     </script>
 </body>

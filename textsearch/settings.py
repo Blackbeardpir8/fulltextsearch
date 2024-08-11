@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 EXTERNAL_APPS = [
     'home',
     'django.contrib.postgres',
+    'debug_toolbar',
 ]
 
 INSTALLED_APPS = INSTALLED_APPS + EXTERNAL_APPS
@@ -54,9 +55,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'textsearch.urls'
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 TEMPLATES = [
     {
